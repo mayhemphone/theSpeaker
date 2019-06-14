@@ -6,25 +6,21 @@ const Alexa = require("ask-sdk");
 const https = require("https");
 
 
-//my declarations
+// my declarations
 const axios = require('axios');
 
-const HEADERS = {"X-API-Key":'3bc3f6c4a6a443e8be34ba4d366a2187'}
-
-const base_url = "https://www.bungie.net/platform/Destiny2/"
-const xur_url = "https://www.bungie.net/Platform/Destiny2/Vendors\/?components=402"
-const hashType = "6"
-
-
-let xur_inventory
+const HEADERS = {"X-API-Key":'API KEY'}
+const BASE_URL = "https://www.bungie.net/platform/Destiny2/"
+const XUR_URL = "https://www.bungie.net/Platform/Destiny2/Vendors\/?components=402"
+const HASH_TYPE = "6"
+let xurInventory
 let sayInventory = 'This week Xur is selling... ';
 
-//end my declarations
-
+// end my declarations
 
 const invocationName = "the destiny two speaker";
 
-// Hit LOCAL  JSON
+// hit LOCAL  JSON
 
 console.log ("##################################################")
 console.log ("## STARTING UP")
@@ -32,21 +28,20 @@ console.log ("##################################################")
 let itemDefRes = require('./data.json');
 
 getXur = () =>{
-	axios.get(xur_url,{headers:HEADERS})
-  .then(response => {
-  	console.log ("Connecting to Bungie: " + xur_url + "\n")
-		console.log ("Fetching data for: Xur's Inventory!")
-    xur_inventory  = response["data"]["Response"]["sales"]["data"]["2190858386"]["saleItems"]
+	axios.get(XUR_URL,{headers:HEADERS})
+    .then(response => {
+      	console.log ("Connecting to Bungie: " + XUR_URL + "\n")
+    	console.log ("Fetching data for: Xur's Inventory!")
+        xurInventory  = response["data"]["Response"]["sales"]["data"]["2190858386"]["saleItems"]
     
-   	// Display Xur's inventory
-    console.log ("\n##################################################")
+       	// display Xur's inventory
+        console.log ("\n##################################################")
 		console.log ("## Xur's inventory:")
 		console.log ("##################################################")
-		console.log(xur_inventory)
+		console.log(xurInventory)
 
-    // fire function to itterate through his inventory
-    itterateInventory(xur_inventory)
-
+        // fire function to itterate through his inventory
+        itterateInventory(xurInventory)
   })
   .catch(error => {
     console.log("ERROR:",error);
@@ -62,18 +57,13 @@ itterateInventory = (inventory) => {
 
 	Object.keys(inventory).forEach((item)=>{
 		let itemHash = inventory[item]['itemHash']
-		// say = say + itemDefRes.data[itemHash]['displayProperties']['name'] + ', '
-  	sayInventory = sayInventory + itemDefRes[itemHash] + ", "
-
+		sayInventory = sayInventory + itemDefRes[itemHash] + ", "
 	})
 	// sayInventory = sayInventory.slice(0, -2)
 	sayInventory = sayInventory + " good luck, gaurdian."
-
-
 	console.log(sayInventory)
 	console.log('\n\n\n')
 }
-
 
 getXur()
 
@@ -232,16 +222,10 @@ const getXurItems_Handler =  {
         const responseBuilder = handlerInput.responseBuilder;
         let sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
 
-        
-
-        //The Speaker - an Alexa Skill for Destiny 2
-
-				
-				
-				let say = sayInventory
-				console.log("say: ",say)
-
-//HAVING AN ASYNC ISSUE.
+        // The Speaker - an Alexa Skill for Destiny 2
+        // grab the string we built when the skill loaded
+		let say = sayInventory
+		console.log("say: ",say)
 
 	    return responseBuilder
 	        .speak(say)
